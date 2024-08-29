@@ -1,8 +1,8 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 
 using namespace System;
 
-// DefiniciÛn de la clase Nodo del ·rbol
+// Definici√≥n de la clase Nodo del √°rbol
 public ref class TreeNode
 {
 public:
@@ -19,100 +19,140 @@ public:
     }
 };
 
-// DefiniciÛn de la clase ¡rbol Binario
+// Definici√≥n de la clase √Årbol Binario
 public ref class BinaryTree
 {
-public:
-    TreeNode^ root;
+    public:
+        TreeNode^ root;
 
-    // Constructor para inicializar el ·rbol vacÌo
-    BinaryTree()
-    {
-        root = nullptr;
-    }
-
-    // MÈtodo para insertar un valor en el ·rbol
-    void Insert(int val)
-    {
-        root = InsertRec(root, val);
-    }
-
-    // MÈtodo recursivo auxiliar para insertar un valor
-private:
-    TreeNode^ InsertRec(TreeNode^ node, int val)
-    {
-        if (node == nullptr)
+        // Constructor para inicializar el √°rbol vac√≠o
+        BinaryTree()
         {
-            node = gcnew TreeNode(val);
+            root = nullptr;
+        }
+
+        // M√©todo para insertar un valor en el √°rbol
+        void Insert(int val)
+        {
+            root = InsertRec(root, val);
+        }
+        
+    private:
+        // M√©todo recursivo auxiliar para insertar un valor
+        TreeNode^ InsertRec(TreeNode^ node, int val)
+        {
+            if (node == nullptr)
+            {
+                node = gcnew TreeNode(val);
+                return node;
+            }
+
+            if (val < node->value)
+            {
+                node->left = InsertRec(node->left, val);
+            }
+            else if (val > node->value)
+            {
+                node->right = InsertRec(node->right, val);
+            }
+
             return node;
         }
 
-        if (val < node->value)
+    public:
+        // M√©todo para recorrer el √°rbol en orden
+        void InOrder()
         {
-            node->left = InsertRec(node->left, val);
-        }
-        else if (val > node->value)
-        {
-            node->right = InsertRec(node->right, val);
+            InOrderRec(root);
         }
 
-        return node;
-    }
-
-public:
-    // MÈtodo para recorrer el ·rbol en orden
-    void InOrder()
-    {
-        InOrderRec(root);
-    }
-
-private:
-    void InOrderRec(TreeNode^ node)
-    {
-        if (node != nullptr)
+    private:
+        void InOrderRec(TreeNode^ node)
         {
-            InOrderRec(node->left);
-            Console::Write("{0} ", node->value);
-            InOrderRec(node->right);
-        }
-    }
-
-    // MÈtodo para buscar un valor en el ·rbol
-public:
-    bool Search(int val)
-    {
-        return SearchRec(root, val);
-    }
-
-private:
-    bool SearchRec(TreeNode^ node, int val)
-    {
-        if (node == nullptr)
-        {
-            return false;
+            if (node != nullptr)
+            {
+                InOrderRec(node->left);
+                Console::Write("{0} ", node->value);
+                InOrderRec(node->right);
+            }
         }
 
-        if (node->value == val)
+        // M√©todo para buscar un valor en el √°rbol
+    public:
+        bool Search(int val)
         {
-            return true;
+            return SearchRec(root, val);
         }
-        else if (val < node->value)
+
+    private:
+        bool SearchRec(TreeNode^ node, int val)
         {
-            return SearchRec(node->left, val);
+            if (node == nullptr)
+            {
+                return false;
+            }
+
+            if (node->value == val)
+            {
+                return true;
+            }
+            else if (val < node->value)
+            {
+                return SearchRec(node->left, val);
+            }
+            else
+            {
+                return SearchRec(node->right, val);
+            }
         }
-        else
+
+    public:
+        void PrintTree()
         {
-            return SearchRec(node->right, val);
+            if (root != nullptr)
+            {
+                Console::WriteLine(root->value); // Imprimir la ra√≠z sin prefijos
+                PrintTreeRec(root->left, "", true);
+                PrintTreeRec(root->right, "", false);
+            }
         }
-    }
+
+    private:
+        void PrintTreeRec(TreeNode^ node, String^ indent, bool isLeft)
+        {
+            if (node != nullptr)
+            {
+                Console::Write(indent);
+
+                if (isLeft)
+                {
+                    Console::Write("L--");
+                    indent += "|  ";
+                }
+                else
+                {
+                    Console::Write("R--");
+                    indent += "   ";
+                }
+
+                Console::WriteLine(node->value);
+
+                if (node->left != nullptr || node->right != nullptr)
+                {
+                    PrintTreeRec(node->left, indent, true);
+                    PrintTreeRec(node->right, indent, false);
+                }
+            }
+        }
+
 };
 
 int main(array<System::String ^> ^args)
 {
-    // Crear un ·rbol binario
+    // Crear un √°rbol binario
     BinaryTree^ tree = gcnew BinaryTree();
 
-    // Insertar elementos en el ·rbol
+    // Insertar elementos en el √°rbol en desorden
     tree->Insert(50);
     tree->Insert(30);
     tree->Insert(20);
@@ -121,17 +161,22 @@ int main(array<System::String ^> ^args)
     tree->Insert(60);
     tree->Insert(80);
 
-    // Recorrer el ·rbol en orden y mostrar los elementos
-    Console::WriteLine("Recorrido en orden del ·rbol:");
+    // Imprimir la representaci√≥n del √°rbol en grafos
+    Console::WriteLine("Representaci√≥n del √°rbol en grafos:");
+    tree->PrintTree();
+    Console::WriteLine();
+
+    // Recorrer el √°rbol en orden y mostrar los elementos
+    Console::WriteLine("Recorrido en orden del √°rbol:");
     tree->InOrder();
     Console::WriteLine();
 
-    // Buscar elementos en el ·rbol
+    // Buscar elementos en el √°rbol
     int searchValue = 40;
-    Console::WriteLine("Buscar {0} en el ·rbol: {1}", searchValue, tree->Search(searchValue) ? "Encontrado" : "No encontrado");
+    Console::WriteLine("Buscar {0} en el √°rbol: {1}", searchValue, tree->Search(searchValue) ? "Encontrado" : "No encontrado");
 
     searchValue = 90;
-    Console::WriteLine("Buscar {0} en el ·rbol: {1}", searchValue, tree->Search(searchValue) ? "Encontrado" : "No encontrado");
+    Console::WriteLine("Buscar {0} en el √°rbol: {1}", searchValue, tree->Search(searchValue) ? "Encontrado" : "No encontrado");
 
     return 0;
 }
